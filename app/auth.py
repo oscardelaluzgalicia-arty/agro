@@ -81,3 +81,4 @@ def login(username: str, password: str):
 
     finally:
         conn.close()
+        

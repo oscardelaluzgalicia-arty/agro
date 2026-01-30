@@ -42,6 +42,7 @@ def login(username: str, password: str):
     if not conn:
         raise HTTPException(status_code=500, detail="DB not connected")
 
+#nada
     try:
         with conn.cursor() as cur:
             cur.execute(

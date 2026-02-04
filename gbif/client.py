@@ -41,7 +41,7 @@ def search_species(name: str):
                     return match
 
             else:
-                print("⚠️ Match no confiable, usando fallback search")
+                print(" Match no confiable, usando fallback search")
 
         # Fallback
         res = requests.get(
@@ -60,11 +60,11 @@ def search_species(name: str):
 
             return results[0]
 
-        print("❌ No se encontraron resultados")
+        print(" No se encontraron resultados")
         return None
 
     except Exception as e:
-        print(f"❌ Error en búsqueda: {e}")
+        print(f" Error en búsqueda: {e}")
         return None
 
 
@@ -73,7 +73,7 @@ def match_species(name: str):
     Resuelve una especie a un taxonKey canónico usando GBIF (/species/match)
     """
     try:
-        print(f"\n🔍 Resolviendo especie: {name}")
+        print(f"\n Resolviendo especie: {name}")
 
         res = requests.get(
             f"{GBIF_URL}/species/match",
@@ -87,11 +87,11 @@ def match_species(name: str):
             print(f"✓ Match: {data.get('scientificName')} (key: {data['usageKey']})")
             return data
         else:
-            print("❌ No se pudo resolver la especie")
+            print(" No se pudo resolver la especie")
             return None
 
     except Exception as e:
-        print(f"❌ Error en match: {e}")
+        print(f" Error en match: {e}")
         return None
 
 
@@ -122,21 +122,21 @@ def get_taxonomy_from_otol(scientific_name: str):
         results = data.get("results", [])
         
         if not results:
-            print(f"⚠️ Sin resultados de OTOL")
+            print(f" Sin resultados de OTOL")
             return {}
         
         first_result = results[0]
         matches = first_result.get("matches", [])
         
         if not matches:
-            print(f"⚠️ No se encontró '{scientific_name}' en OpenTreeOfLife")
+            print(f" No se encontró '{scientific_name}' en OpenTreeOfLife")
             return {}
         
         match = matches[0]
         ott_id = match.get("taxon", {}).get("ott_id")
         
         if not ott_id:
-            print(f"⚠️ No se encontró ott_id en el match")
+            print(f" No se encontró ott_id en el match")
             return {}
         
         print(f"✓ Encontrado en OTOL con ott_id: {ott_id}")
@@ -159,7 +159,7 @@ def get_taxonomy_from_otol(scientific_name: str):
         return taxonomy
         
     except Exception as e:
-        print(f"❌ Error consultando OpenTreeOfLife: {str(e)}")
+        print(f" Error consultando OpenTreeOfLife: {str(e)}")
         import traceback
         traceback.print_exc()
         return {}
@@ -194,7 +194,7 @@ def extract_taxonomy_from_lineage(taxon_data: dict) -> dict:
         elif rank == "genus" and taxonomy["genus"] is None:
             taxonomy["genus"] = name
     
-    print(f"\n✅ Taxonomía extraída: {taxonomy}")
+    print(f"\n Taxonomía extraída: {taxonomy}")
     return taxonomy
 
 
@@ -207,7 +207,7 @@ def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX",
     state_province: Nombre del estado o provincia
     """
     try:
-        print(f"\n🌍 Obteniendo ocurrencias para taxonKey: {taxon_key} en {country_code}")
+        print(f"\n Obteniendo ocurrencias para taxonKey: {taxon_key} en {country_code}")
         
         # Parámetros base
         params = {
@@ -238,7 +238,7 @@ def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX",
         
         # Si no hay resultados con coordenadas, intentar sin ese filtro
         if len(occurrences) == 0:
-            print(f"⚠️ No hay ocurrencias con coordenadas, intentando sin filtro...")
+            print(f" No hay ocurrencias con coordenadas, intentando sin filtro...")
             
             # Quitar filtro de coordenadas
             params.pop("hasCoordinate")
@@ -277,7 +277,7 @@ def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX",
         return occurrences
         
     except Exception as e:
-        print(f"❌ Error obteniendo ocurrencias: {str(e)}")
+        print(f" Error obteniendo ocurrencias: {str(e)}")
         import traceback
         traceback.print_exc()
         return []
@@ -292,7 +292,7 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
     state_province: Nombre del estado o provincia
     """
     try:
-        print(f"\n📍 Obteniendo ocurrencias de GBIF para taxonKey: {taxon_key} en {country_code}")
+        print(f"\n Obteniendo ocurrencias de GBIF para taxonKey: {taxon_key} en {country_code}")
         
         all_occurrences = []
         offset = 0
@@ -300,7 +300,7 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
         occurrences_with_coords = 0
         
         # Primero, intentar sin filtro de país para debug
-        print(f"  ℹ️ Intento 1: Sin filtro de país...")
+        print(f"Intento 1: Sin filtro de país...")
         res = requests.get(
             f"{GBIF_URL}/occurrence/search",
             params={
@@ -316,7 +316,7 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
         print(f"    Total de ocurrencias GLOBALES: {total_global}")
         
         # Ahora intenta con país
-        print(f"  ℹ️ Intento 2: Con filtro country={country_code}...")
+        print(f"Intento 2: Con filtro country={country_code}...")
         search_params = {
             "taxonKey": taxon_key,
             "country": country_code,
@@ -338,14 +338,14 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
         
         # Si hay resultados, proceder con paginación
         if total_mexico == 0:
-            print(f"  ⚠️ No hay ocurrencias en {country_code}")
-            print(f"  💡 Intentando obtener todos los resultados globales y filtrar por país...")
+            print(f"   No hay ocurrencias en {country_code}")
+            print(f"   Intentando obtener todos los resultados globales y filtrar por país...")
             country_code = None  # Obtener todo y filtrar en código
         
         offset = 0
         
         while True:
-            print(f"  ⏳ Descargando registros offset={offset}...")
+            print(f"   Descargando registros offset={offset}...")
             
             params = {
                 "taxonKey": taxon_key,
@@ -398,7 +398,7 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
             
             # Limitar a primeras 100,000 para no tardar demasiado
             if occurrences_with_coords >= 100000:
-                print(f"  ℹ️ Se alcanzó el límite de 100,000 ocurrencias")
+                print(f"Se alcanzó el límite de 100,000 ocurrencias")
                 break
             
             # Si ya tenemos todos los resultados, romper
@@ -409,7 +409,7 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
         return all_occurrences
         
     except Exception as e:
-        print(f"❌ Error obteniendo ocurrencias de GBIF: {str(e)}")
+        print(f" Error obteniendo ocurrencias de GBIF: {str(e)}")
         import traceback
         traceback.print_exc()
         return []
@@ -422,7 +422,7 @@ def extract_ecological_zones_from_gbif_occurrences(occurrences: list) -> dict:
     """
     zones_data = {}
     
-    print(f"\n📊 Procesando {len(occurrences)} ocurrencias de GBIF...")
+    print(f"\n Procesando {len(occurrences)} ocurrencias de GBIF...")
     
     # Agrupar por zona (estado)
     for occ in occurrences:
@@ -444,7 +444,7 @@ def extract_ecological_zones_from_gbif_occurrences(occurrences: list) -> dict:
             zones_data[zone_key]["observation_count"] += 1
                 
         except Exception as e:
-            print(f"⚠️ Error procesando ocurrencia: {e}")
+            print(f" Error procesando ocurrencia: {e}")
             continue
     
     print(f"✓ Se extrajeron {len(zones_data)} zonas ecológicas ÚNICAS")
@@ -516,7 +516,7 @@ def parse_occurrence(occurrence: dict, species_id: int) -> dict:
                 })
                 
         except Exception as e:
-            print(f"⚠️ Error procesando ocurrencia: {e}")
+            print(f" Error procesando ocurrencia: {e}")
             continue
     
     print(f"✓ Se extrajeron {len(zones_data)} zonas ecológicas únicas")

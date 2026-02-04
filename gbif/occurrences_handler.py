@@ -57,7 +57,7 @@ def insert_occurrence(conn, occurrence_data: dict) -> bool:
             )
             return cur.rowcount > 0
     except Exception as e:
-        print(f"⚠️ Error insertando ocurrencia: {e}")
+        print(f" Error insertando ocurrencia: {e}")
         return False
 
 
@@ -95,21 +95,21 @@ def import_occurrences_batch(occurrences_list: list) -> dict:
                     stats["duplicated"] += 1
                     
             except Exception as e:
-                print(f"❌ Error procesando ocurrencia: {e}")
+                print(f" Error procesando ocurrencia: {e}")
                 stats["errors"] += 1
         
         conn.commit()
         
         print(f"✓ Ocurrencias importadas: {stats['inserted']}")
         if stats["duplicated"] > 0:
-            print(f"⏭️  Duplicadas (gbif_occurrence_id ya existe): {stats['duplicated']}")
+            print(f"  Duplicadas (gbif_occurrence_id ya existe): {stats['duplicated']}")
         if stats["errors"] > 0:
-            print(f"❌ Errores: {stats['errors']}")
+            print(f" Errores: {stats['errors']}")
         
         return stats
         
     except Exception as e:
-        print(f"❌ Error en importación de ocurrencias: {e}")
+        print(f" Error en importación de ocurrencias: {e}")
         return stats
     finally:
         conn.close()
@@ -141,5 +141,5 @@ def import_occurrences_batch(occurrences_list: list) -> dict:
             return stats
 
         except Exception as e:
-            print(f"❌ Error en fetch_and_import_occurrences_from_gbif: {e}")
+            print(f" Error en fetch_and_import_occurrences_from_gbif: {e}")
             return {"inserted": 0, "duplicated": 0, "errors": 1}

@@ -17,7 +17,7 @@ router = APIRouter()
 class GBIFRequest(BaseModel):
     name: str
     country: str = "MX"  # Por defecto México
-
+    state_province: str = None
 
 @router.post("/import")
 def import_from_gbif(
@@ -25,10 +25,8 @@ def import_from_gbif(
     _=Depends(auth_middleware)
 ):
     found = search_species(body.name)
-
     if not found:
         raise HTTPException(404, "Species not found in GBIF")
-
     gbif_key = found["key"]
     full_data = get_species(gbif_key)
     
@@ -87,7 +85,12 @@ def import_from_gbif(
     # Convertir país a código ISO si es necesario
     country_code = "MX" if body.country.lower() in ["mexico", "méxico"] else body.country
     
-    occurrences = get_occurrences_from_gbif(gbif_key, limit=300, country_code=country_code)
+    occurrences = get_occurrences_from_gbif(
+        gbif_key, 
+        limit=300, 
+        country_code=country_code,
+        state_province=body.state_province
+    )
     
     if occurrences and len(occurrences) > 0:
         print(f"✓ Se encontraron {len(occurrences)} ocurrencias con coordenadas")

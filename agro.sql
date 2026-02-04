@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-01-2026 a las 00:16:31
+-- Tiempo de generación: 30-01-2026 a las 18:21:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -34,6 +34,66 @@ CREATE TABLE `ecological_zones` (
   `climate_type` varchar(100) DEFAULT NULL,
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ecological_zones`
+--
+
+INSERT INTO `ecological_zones` (`id_zone`, `zone_name`, `biome_type`, `climate_type`, `description`) VALUES
+(1, 'Unknown - Unknown', 'The scientific name for common wheat, the most widely grown type, is Triticum aestivum, belonging to', 'The scientific name for common wheat, the most widely grown type, is Triticum aestivum, belonging to', 'Habitat: The scientific name for common wheat, the most widely grown type, is Triticum aestivum, belonging to, Occurrences: 0'),
+(2, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(3, 'Unknown - Unknown', 'Crop of...?', 'Crop of...?', 'Habitat: Crop of...?, Occurrences: 0'),
+(4, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(5, 'Unknown - Unknown', 'На обочине дороги\n// on the side of the', 'На обочине дороги\n// on the side of the', 'Habitat: На обочине дороги\n// on the side of the, Occurrences: 0'),
+(6, 'Unknown - Unknown', 'A moderate patch within an unsanctioned encampment ', 'A moderate patch within an unsanctioned encampment ', 'Habitat: A moderate patch within an unsanctioned encampment , Occurrences: 0'),
+(7, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(8, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(9, 'Unknown - Unknown', 'Frostschäden?', 'Frostschäden?', 'Habitat: Frostschäden?, Occurrences: 0'),
+(10, 'Unknown - Unknown', 'ssmtracks', 'ssmtracks', 'Habitat: ssmtracks, Occurrences: 0'),
+(11, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(12, 'Unknown - Unknown', 'На обочине дороги\n// on the side of the road', 'На обочине дороги\n// on the side of the road', 'Habitat: На обочине дороги\n// on the side of the road, Occurrences: 0'),
+(13, 'Unknown - Unknown', 'cat grass seed', 'cat grass seed', 'Habitat: cat grass seed, Occurrences: 0'),
+(14, 'Unknown - Unknown', 'Put out birdseed and it got rained on and now there’s a bunch of sprouts in there lol.', 'Put out birdseed and it got rained on and now there’s a bunch of sprouts in there lol.', 'Habitat: Put out birdseed and it got rained on and now there’s a bunch of sprouts in there lol., Occurrences: 0'),
+(15, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(16, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(17, 'Unknown - Unknown', 'Found in the same yard as several sorghum plants, likely left over from birdseed', 'Found in the same yard as several sorghum plants, likely left over from birdseed', 'Habitat: Found in the same yard as several sorghum plants, likely left over from birdseed, Occurrences: 0'),
+(18, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(19, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(20, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(21, 'Unknown - Unknown', 'Growing in the gutter - bird spread?', 'Growing in the gutter - bird spread?', 'Habitat: Growing in the gutter - bird spread?, Occurrences: 0'),
+(22, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(23, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(24, 'Unknown - Unknown', 'Left side.', 'Left side.', 'Habitat: Left side., Occurrences: 0'),
+(25, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(26, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(27, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(28, 'Unknown - Unknown', 'Wheat seeds brought in with a truck load of road gravel', 'Wheat seeds brought in with a truck load of road gravel', 'Habitat: Wheat seeds brought in with a truck load of road gravel, Occurrences: 0'),
+(29, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(30, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(31, 'Unknown - Unknown', 'На обочине дороги\n// on the side of the road', 'На обочине дороги\n// on the side of the road', 'Habitat: На обочине дороги\n// on the side of the road, Occurrences: 0'),
+(32, 'Unknown - Unknown', 'See bird   https://www.inaturalist.org/observations/326213758', 'See bird   https://www.inaturalist.org/observations/326213758', 'Habitat: See bird   https://www.inaturalist.org/observations/326213758, Occurrences: 0'),
+(33, 'Unknown - Unknown', 'Not cultivated', 'Not cultivated', 'Habitat: Not cultivated, Occurrences: 0'),
+(34, 'Unknown - Unknown', 'گندم🌾', 'گندم🌾', 'Habitat: گندم🌾, Occurrences: 0'),
+(35, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(36, 'Unknown - Unknown', 'Not in cultivation, only a singular plant', 'Not in cultivation, only a singular plant', 'Habitat: Not in cultivation, only a singular plant, Occurrences: 0'),
+(37, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(38, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(39, 'Unknown - Unknown', 'trigo (Triticum aestivum; Poaceae), com as espigas quase prontas para a colheita.\nErva exótica, prov', 'trigo (Triticum aestivum; Poaceae), com as espigas quase prontas para a colheita.\nErva exótica, prov', 'Habitat: trigo (Triticum aestivum; Poaceae), com as espigas quase prontas para a colheita.\nErva exótica, prov, Occurrences: 0'),
+(40, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(41, 'Unknown - Unknown', 'Заброшенное поле.', 'Заброшенное поле.', 'Habitat: Заброшенное поле., Occurrences: 0'),
+(42, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(43, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(44, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(45, 'Unknown - Unknown', 'App\'s suggestion!?\nBusy street, near sidewalk', 'App\'s suggestion!?\nBusy street, near sidewalk', 'Habitat: App\'s suggestion!?\nBusy street, near sidewalk, Occurrences: 0'),
+(46, 'Unknown - Unknown', 'On edge of new gravel pathway', 'On edge of new gravel pathway', 'Habitat: On edge of new gravel pathway, Occurrences: 0'),
+(47, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(48, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(49, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(50, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(51, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(52, 'Unknown - Unknown', ' -117.16', ' -117.16', 'Habitat:  -117.16, Occurrences: 0'),
+(53, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0'),
+(54, 'Unknown - Unknown', '', '', 'Habitat: , Occurrences: 0');
 
 -- --------------------------------------------------------
 
@@ -128,7 +188,9 @@ CREATE TABLE `species` (
 
 INSERT INTO `species` (`id_species`, `taxonKey`, `scientific_name`, `kingdom`, `phylum`, `class_name`, `order_name`, `family`, `genus`, `species`, `taxonomic_status`, `created_at`) VALUES
 (1, 206097367, 'Zea mays', 'Plantae', NULL, NULL, NULL, NULL, NULL, 'Zea mays', 'ACCEPTED', '2026-01-28 04:40:34'),
-(2, 145956043, 'Oryza sativa', 'Plantae', 'Angiospermae', 'Liliopsida', 'Poales', 'Poaceae', 'Oryza', 'Oryza sativa', 'ACCEPTED', '2026-01-28 23:11:53');
+(2, 145956043, 'Oryza sativa', 'Plantae', 'Angiospermae', 'Liliopsida', 'Poales', 'Poaceae', 'Oryza', 'Oryza sativa', 'ACCEPTED', '2026-01-28 23:11:53'),
+(3, 143611484, 'Triticum aestivum', 'Plantae', 'Tracheophyta', 'Liliopsida', 'Poales', 'Poaceae', 'Triticum', 'Triticum aestivum', 'ACCEPTED', '2026-01-28 23:28:17'),
+(4, 191954299, 'Solanum lycopersicum', 'Plantae', 'Trachaeophyta', 'Magnoliopsida', 'Solanales', 'Solanaceae', 'Solanum', 'Solanum lycopersicum', 'ACCEPTED', '2026-01-28 23:45:51');
 
 -- --------------------------------------------------------
 
@@ -293,7 +355,7 @@ ALTER TABLE `vernacular_names`
 -- AUTO_INCREMENT de la tabla `ecological_zones`
 --
 ALTER TABLE `ecological_zones`
-  MODIFY `id_zone` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_zone` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `modules`
@@ -317,7 +379,7 @@ ALTER TABLE `persons`
 -- AUTO_INCREMENT de la tabla `species`
 --
 ALTER TABLE `species`
-  MODIFY `id_species` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_species` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `species_interactions`

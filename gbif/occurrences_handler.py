@@ -3,6 +3,7 @@ Módulo para manejar la importación de ocurrencias a la base de datos
 Almacena datos de distribución geográfica y temporal de especies
 """
 from app.db import get_connection
+from gbif.client import get_occurrences_from_gbif, parse_occurrence
 
 
 def insert_occurrence(conn, occurrence_data: dict) -> bool:
@@ -112,3 +113,33 @@ def import_occurrences_batch(occurrences_list: list) -> dict:
         return stats
     finally:
         conn.close()
+
+
+    def fetch_and_import_occurrences_from_gbif(taxon_key: int, species_id: int, limit: int = 300, country_code: str = "MX") -> dict:
+        """
+        Obtiene ocurrencias desde GBIF (usando `gbif.client.get_occurrences_from_gbif`),
+        las parsea con `parse_occurrence` y las importa en lote usando
+        `import_occurrences_batch`.
+
+        Devuelve el diccionario de estadísticas retornado por `import_occurrences_batch`.
+        """
+        try:
+            print(f"\n📡 Obteniendo ocurrencias desde GBIF para taxonKey={taxon_key}...")
+            occurrences = get_occurrences_from_gbif(taxon_key, limit=limit, country_code=country_code)
+
+            if not occurrences:
+                print("⚠️ No se encontraron ocurrencias para importar")
+                return {"inserted": 0, "duplicated": 0, "errors": 0}
+
+            print(f"📍 Parseando {len(occurrences)} ocurrencias para la especie id={species_id}...")
+            parsed = [parse_occurrence(occ, species_id) for occ in occurrences]
+
+            print("⬇️  Importando lote de ocurrencias parseadas...")
+            stats = import_occurrences_batch(parsed)
+
+            print(f"✓ Importación finalizada: inserted={stats.get('inserted')}, duplicated={stats.get('duplicated')}, errors={stats.get('errors')}")
+            return stats
+
+        except Exception as e:
+            print(f"❌ Error en fetch_and_import_occurrences_from_gbif: {e}")
+            return {"inserted": 0, "duplicated": 0, "errors": 1}

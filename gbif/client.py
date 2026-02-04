@@ -4,31 +4,94 @@ GBIF_URL = "https://api.gbif.org/v1"
 OTOL_URL = "https://api.opentreeoflife.org/v3"
 INATURALIST_URL = "https://api.inaturalist.org/v1"
 
+def get_occurrence_taxon_key(species):
+    return species["key"] if species["rank"] == "SPECIES" else species["usageKey"]
+
 def search_species(name: str):
     """
     Busca una especie en GBIF por nombre común o científico
     """
     try:
         print(f"\n🔍 Buscando especie: {name}")
+
+        match = match_species(name)
+
+        if match:
+            rank = match.get("rank")
+            confidence = match.get("confidence", 0)
+            status = match.get("status")
+
+            print(
+                f"Match: {match.get('scientificName')} | "
+                f"rank={rank} | confidence={confidence}"
+            )
+
+            if (
+                match.get("usageKey")
+                and rank == "SPECIES"
+                and confidence >= 90
+            ):
+                key = match["usageKey"]
+
+                try:
+                    full = get_species(key)
+                    print(f"✓ Taxón aceptado: key={key}")
+                    return full
+                except Exception:
+                    return match
+
+            else:
+                print("⚠️ Match no confiable, usando fallback search")
+
+        # Fallback
         res = requests.get(
             f"{GBIF_URL}/species/search",
-            params={"q": name, "limit": 10},  # Aumentar a 10 para ver opciones
+            params={"q": name, "limit": 10},
             timeout=10
         )
         res.raise_for_status()
         results = res.json().get("results", [])
-        
+
         if results:
-            print(f"✓ Se encontraron {len(results)} resultado(s)")
-            for i, r in enumerate(results[:3], 1):
-                print(f"  [{i}] {r.get('scientificName')} (key: {r.get('key')})")
+            for r in results:
+                if r.get("rank") == "SPECIES":
+                    print(f"✓ Fallback species: {r.get('scientificName')} ({r.get('key')})")
+                    return r
+
             return results[0]
-        else:
-            print(f"❌ No se encontraron resultados para: {name}")
-            return None
-            
+
+        print("❌ No se encontraron resultados")
+        return None
+
     except Exception as e:
         print(f"❌ Error en búsqueda: {e}")
+        return None
+
+
+def match_species(name: str):
+    """
+    Resuelve una especie a un taxonKey canónico usando GBIF (/species/match)
+    """
+    try:
+        print(f"\n🔍 Resolviendo especie: {name}")
+
+        res = requests.get(
+            f"{GBIF_URL}/species/match",
+            params={"name": name},
+            timeout=10
+        )
+        res.raise_for_status()
+        data = res.json()
+
+        if "usageKey" in data:
+            print(f"✓ Match: {data.get('scientificName')} (key: {data['usageKey']})")
+            return data
+        else:
+            print("❌ No se pudo resolver la especie")
+            return None
+
+    except Exception as e:
+        print(f"❌ Error en match: {e}")
         return None
 
 
@@ -135,26 +198,34 @@ def extract_taxonomy_from_lineage(taxon_data: dict) -> dict:
     return taxonomy
 
 
-def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX"):
+def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX", state_province: str = None):
     """
     Obtiene ocurrencias (avistamientos) de una especie desde GBIF
-    Limitado a un país específico (por defecto México)
+    Limitado a un país y/o estado específico
     
     country_code: Código ISO del país (ej: 'MX' para México)
+    state_province: Nombre del estado o provincia
     """
     try:
         print(f"\n🌍 Obteniendo ocurrencias para taxonKey: {taxon_key} en {country_code}")
         
+        # Parámetros base
+        params = {
+            "taxonKey": taxon_key,
+            "limit": limit,
+            "offset": 0,
+            "hasCoordinate": True,
+            "country": country_code
+        }
+        
+        # Añadir state_province si se proporciona
+        if state_province:
+            params["stateProvince"] = state_province
+        
         # Primer intento: con coordenadas válidas
         res = requests.get(
             f"{GBIF_URL}/occurrence/search",
-            params={
-                "taxonKey": taxon_key,
-                "limit": limit,
-                "offset": 0,
-                "hasCoordinate": True,
-                "country": country_code  # Limitar a país específico
-            },
+            params=params,
             timeout=30
         )
         res.raise_for_status()
@@ -169,14 +240,12 @@ def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX")
         if len(occurrences) == 0:
             print(f"⚠️ No hay ocurrencias con coordenadas, intentando sin filtro...")
             
+            # Quitar filtro de coordenadas
+            params.pop("hasCoordinate")
+            
             res = requests.get(
                 f"{GBIF_URL}/occurrence/search",
-                params={
-                    "taxonKey": taxon_key,
-                    "limit": limit,
-                    "offset": 0,
-                    "country": country_code  # Mantener país
-                },
+                params=params,
                 timeout=30
             )
             res.raise_for_status()
@@ -214,12 +283,13 @@ def get_occurrences(taxon_key: int, limit: int = 1000, country_code: str = "MX")
         return []
 
 
-def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: str = "MX") -> list:
+def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: str = "MX", state_province: str = None) -> list:
     """
     Obtiene ocurrencias de GBIF usando el endpoint occurrence/search
     Con paginación automática para obtener todos los registros con coordenadas
     
     country_code: Código ISO del país (ej: 'MX' para México)
+    state_province: Nombre del estado o provincia
     """
     try:
         print(f"\n📍 Obteniendo ocurrencias de GBIF para taxonKey: {taxon_key} en {country_code}")
@@ -247,14 +317,18 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
         
         # Ahora intenta con país
         print(f"  ℹ️ Intento 2: Con filtro country={country_code}...")
+        search_params = {
+            "taxonKey": taxon_key,
+            "country": country_code,
+            "limit": 1,
+            "offset": 0
+        }
+        if state_province:
+            search_params["stateProvince"] = state_province
+
         res = requests.get(
             f"{GBIF_URL}/occurrence/search",
-            params={
-                "taxonKey": taxon_key,
-                "country": country_code,
-                "limit": 1,
-                "offset": 0
-            },
+            params=search_params,
             timeout=30
         )
         res.raise_for_status()
@@ -281,6 +355,8 @@ def get_occurrences_from_gbif(taxon_key: int, limit: int = 300, country_code: st
             
             if country_code:
                 params["country"] = country_code
+            if state_province:
+                params["stateProvince"] = state_province
             
             res = requests.get(
                 f"{GBIF_URL}/occurrence/search",

@@ -4,3 +4,9 @@ python-dotenv
 pymysql
 bcrypt
 python-jose
+requests
+numpy
+scipy
+aiohttp
+rasterio
+

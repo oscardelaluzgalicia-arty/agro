@@ -9,4 +9,5 @@ numpy
 scipy
 aiohttp
 rasterio
+openai
 

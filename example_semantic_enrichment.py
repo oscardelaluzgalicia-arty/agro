@@ -1,6 +1,6 @@
 """
-Ejemplo de integración del Traductor Semántico con GBIF y la Base de Datos
-Muestra cómo usar el sistema para enriquecer automáticamente la BD
+Ejemplo de integracion del Traductor Semantico con GBIF y la Base de Datos
+Muestra como usar el sistema para enriquecer automaticamente la BD
 """
 
 import requests
@@ -10,9 +10,9 @@ from typing import Optional, Dict, Any
 class SemanticEnrichmentOrchestrator:
     """
     Orquestador que coordina:
-    1. Traducción de nombre común → científico
-    2. Validación con GBIF
-    3. Importación de datos a la BD agronomic
+    1. Traduccion de nombre comun => cientifico
+    2. Validacion con GBIF
+    3. Importacion de datos a la BD agronomic
     """
     
     def __init__(self, api_url: str, jwt_token: str):
@@ -21,7 +21,7 @@ class SemanticEnrichmentOrchestrator:
         
         Args:
             api_url: URL base de la API (ej: http://localhost:8000)
-            jwt_token: Token JWT para autenticación
+            jwt_token: Token JWT para autenticacion
         """
         self.api_url = api_url.rstrip("/")
         self.jwt_token = jwt_token
@@ -32,30 +32,30 @@ class SemanticEnrichmentOrchestrator:
     
     def enrich_from_common_name(self, common_name: str) -> Dict[str, Any]:
         """
-        Pipeline completo: nombre común → especificación de especies en BD
+        Pipeline completo: nombre comun => especificacion de especies en BD
         
         Flujo:
-        1️⃣ Traducir nombre común a científicos
-        2️⃣ Validar con GBIF
-        3️⃣ Importar cada especie a la BD
-        4️⃣ Enriquecer con datos agronómicos
+        1. Traducir nombre comun a cientificos
+        2. Validar con GBIF
+        3. Importar cada especie a la BD
+        4. Enriquecer con datos agronomicos
         
         Args:
-            common_name: Nombre común de la planta
+            common_name: Nombre comun de la planta
             
         Returns:
             Dict con resultado del enriquecimiento
         """
         print(f"\n{'='*60}")
-        print(f"🌱 ENRIQUECIMIENTO: {common_name.upper()}")
+        print(f"ENRIQUECIMIENTO: {common_name.upper()}")
         print(f"{'='*60}")
         
         try:
-            # 1️⃣ PASO 1: Traducir con IA
-            print(f"\n1️⃣  Traduciendo '{common_name}' a nombres científicos...")
-            response = requests.get(
+            # Paso 1: Traducir con IA
+            print(f"\nPaso 1: Traduciendo '{common_name}' a nombres cientificos...")
+            response = requests.post(
                 f"{self.api_url}/api/v1/semantic/resolve-common-name",
-                params={"name": common_name},
+                json={"name": common_name},
                 headers=self.headers
             )
             
@@ -63,14 +63,14 @@ class SemanticEnrichmentOrchestrator:
                 return {
                     "status": "error",
                     "step": "semantic_translation",
-                    "error": response.json().get("detail", "Error en traducción")
+                    "error": response.json().get("detail", "Error en traduccion")
                 }
             
             semantic_result = response.json()
-            print(f"   ✅ Se encontraron {semantic_result['totalFound']} nombres científicos")
+            print(f"   OK - Se encontraron {semantic_result['totalFound']} nombres cientificos")
             
-            # 2️⃣ PASO 2: Importar especies de GBIF
-            print(f"\n2️⃣  Importando especies de GBIF...")
+            # Paso 2: Importar especies de GBIF
+            print(f"\nPaso 2: Importando especies de GBIF...")
             imported_species = []
             
             for sci_name_obj in semantic_result["scientificNames"]:
@@ -93,9 +93,9 @@ class SemanticEnrichmentOrchestrator:
                         "gbifData": sci_name_obj,
                         "speciesData": species_data
                     })
-                    print(f"      ✅ Importado exitosamente")
+                    print(f"      OK - Importado exitosamente")
                 else:
-                    print(f"      ❌ Error: {import_response.json()}")
+                    print(f"      ERROR - Error: {import_response.json()}")
             
             if not imported_species:
                 return {
@@ -104,7 +104,7 @@ class SemanticEnrichmentOrchestrator:
                     "error": "No se pudieron importar especies de GBIF"
                 }
             
-            # PASO 3: Enriquecer agronomicamente
+            # Paso 3: Enriquecer agronomicamente
             print(f"\nPaso 3: Enriqueciendo con datos agronomicos...")
             enriched_species = []
             
@@ -144,7 +144,7 @@ class SemanticEnrichmentOrchestrator:
         except requests.RequestException as e:
             return {
                 "status": "error",
-                "error": f"Error de conexión: {str(e)}"
+                "error": f"Error de conexion: {str(e)}"
             }
         except Exception as e:
             return {
@@ -154,7 +154,7 @@ class SemanticEnrichmentOrchestrator:
     
     def enrich_batch(self, common_names: list) -> Dict[str, Any]:
         """
-        Enriquece múltiples nombres comunes
+        Enriquece multiples nombres comunes
         
         Args:
             common_names: Lista de nombres comunes
@@ -204,7 +204,7 @@ class SemanticEnrichmentOrchestrator:
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    # Configuración
+    # Configuracion
     API_URL = "http://localhost:8000"
     JWT_TOKEN = "your_jwt_token_here"
     

@@ -48,22 +48,30 @@ teacher gbif_validator.py        # Validacion contra GBIF
 
 ## Endpoints API
 
-### 1. Resolver Nombre Comun (GET)
+### 1. Resolver Nombre Comun (POST)
 
-**Endpoint**: `GET /api/v1/semantic/resolve-common-name`
-
-**Parametros**:
-- `name` (string, requerido): Nombre comun de la planta/fruta/verdura
+**Endpoint**: `POST /api/v1/semantic/resolve-common-name`
 
 **Headers**:
 ```
 Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Request body**:
+```json
+{
+  "name": "uva"
+}
 ```
 
 **Ejemplo Request**:
 ```bash
-curl -H "Authorization: Bearer YOUR_TOKEN" \
-  "http://localhost:8000/api/v1/semantic/resolve-common-name?name=uva"
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "uva"}' \
+  "http://localhost:8000/api/v1/semantic/resolve-common-name"
 ```
 
 **Ejemplo Response** (Exitoso - 200):
@@ -190,14 +198,14 @@ Clase `GBIFValidator`:
 Cuando un usuario ingresa un nombre comun:
 
 ```python
-# 1. Resolver el nombre común
-response = requests.get(
+# 1. Resolver el nombre comun
+response = requests.post(
     "http://api/api/v1/semantic/resolve-common-name",
-    params={"name": "tomate"},
+    json={"name": "tomate"},
     headers={"Authorization": f"Bearer {token}"}
 )
 
-# 2. Usar el nombre científico validado para importar de GBIF
+# 2. Usar el nombre cientifico validado para importar de GBIF
 for sci_name in response.json()["scientificNames"]:
     # Importar de GBIF usando scientificName
     requests.post(
@@ -213,7 +221,10 @@ Permitir a usuarios buscar por nombre comun y obtener resultados taxonomicos:
 
 ```bash
 # Usuario busca "papa"
-GET /api/v1/semantic/resolve-common-name?name=papa
+POST /api/v1/semantic/resolve-common-name
+{
+  "name": "papa"
+}
 
 # API retorna:
 # - Solanum tuberosum (papa)
@@ -221,12 +232,12 @@ GET /api/v1/semantic/resolve-common-name?name=papa
 # - Solanum demissum
 ```
 
-### 3. Validación de Especies
+### 3. Validacion de Especies
 
 Antes de almacenar una especie en la BD, validar que existe en GBIF:
 
 ```python
-# Validar múltiples nombres
+# Validar multiples nombres
 response = requests.post(
     "http://api/api/v1/semantic/resolve-common-name-batch",
     json={"names": ["uva", "manzana", "tomate"]},

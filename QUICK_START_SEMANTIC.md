@@ -47,35 +47,38 @@ uvicorn app.main:app --reload --port 8000
 
 ### 5. Probar los Endpoints
 
-#### Opción A: Con curl
+#### Opcion A: Con curl
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  "http://localhost:8000/api/v1/semantic/resolve-common-name?name=uva"
+curl -X POST \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "uva"}' \
+  "http://localhost:8000/api/v1/semantic/resolve-common-name"
 ```
 
-#### Opción B: Con Python
+#### Opcion B: Con Python
 
 ```python
 import requests
 
 token = "YOUR_JWT_TOKEN"
-response = requests.get(
+response = requests.post(
     "http://localhost:8000/api/v1/semantic/resolve-common-name",
-    params={"name": "uva"},
+    json={"name": "uva"},
     headers={"Authorization": f"Bearer {token}"}
 )
 
 print(response.json())
 ```
 
-#### Opción C: Con el script ejemplo
+#### Opcion C: Con el script ejemplo
 
 ```bash
 python example_semantic_enrichment.py
 ```
 
-### 📊 Estructura de Respuesta
+### Estructura de Respuesta
 
 ```json
 {
@@ -93,25 +96,25 @@ python example_semantic_enrichment.py
 }
 ```
 
-### 📚 Documentación Completa
+### Documentacion Completa
 
-Para más detalles, consulta [SEMANTIC_TRANSLATOR.md](SEMANTIC_TRANSLATOR.md)
+Para mas detalles, consulta [SEMANTIC_TRANSLATOR.md](SEMANTIC_TRANSLATOR.md)
 
-### 🐛 Troubleshooting
+### Troubleshooting
 
-**Error: "OPENAI_API_KEY no está configurada"**
+**Error: "OPENAI_API_KEY no esta configurada"**
 - Revisa que `.env` tenga la variable configurada
-- Reinicia la aplicación después de editar `.env`
+- Reinicia la aplicacion despues de editar `.env`
 
-**Error: "No se pudo validar ningún nombre científico en GBIF"**
-- Prueba con nombres más comunes (uva, manzana, tomate)
-- Algunos nombres raros o locales no están en GBIF
+**Error: "No se pudo validar ningun nombre cientifico en GBIF"**
+- Prueba con nombres mas comunes (uva, manzana, tomate)
+- Algunos nombres raros o locales no estan en GBIF
 
 **Error: "Rate limit exceeded"**
-- Espera unos minutos y reinténtalo
-- Implementa caché para reducir llamadas repetidas
+- Espera unos minutos y reintengtalo
+- Implementa cache para reducir llamadas repetidas
 
-### ✨ Casos de Uso
+### Casos de Uso
 
 1. **Busqueda inteligente**: Usuario dice "uva" => obtiene "Vitis vinifera"
 2. **Enriquecimiento**: Importa automaticamente datos de GBIF

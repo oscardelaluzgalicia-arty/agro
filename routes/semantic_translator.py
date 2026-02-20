@@ -1,5 +1,5 @@
 """
-Router para el traductor semántico - Resuelve nombres comunes a científicos
+Router para el traductor semantico - Resuelve nombres comunes a cientificos
 """
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
@@ -12,12 +12,12 @@ router = APIRouter()
 
 
 class ResolveCommonNameRequest(BaseModel):
-    """Modelo de request para resolver nombre común"""
+    """Modelo de request para resolver nombre comun"""
     name: str
 
 
 class ScientificNameResult(BaseModel):
-    """Modelo de resultado para un nombre científico validado"""
+    """Modelo de resultado para un nombre cientifico validado"""
     inputName: str
     scientificName: str
     canonicalName: str
@@ -37,13 +37,13 @@ class ResolveCommonNameResponse(BaseModel):
     totalFound: int
 
 
-@router.get("/resolve-common-name")
+@router.post("/resolve-common-name")
 def resolve_common_name(
-    name: str,
+    body: ResolveCommonNameRequest,
     _=Depends(auth_middleware)
 ):
     """
-    Resuelve un nombre común a nombres científicos validados con GBIF
+    Resuelve un nombre comun a nombres cientificos validados con GBIF
     
     Flujo:
     1. Usuario => nombre comun (ej: "uva")
@@ -51,19 +51,22 @@ def resolve_common_name(
     3. GBIF => valida y obtiene datos taxonomicos completos
     4. API => responde con datos normalizados
     
-    Args:
-        name: Nombre común de la planta/fruta/verdura
-        
+    Request body:
+    {
+        "name": "uva"
+    }
+    
     Returns:
-        ResolveCommonNameResponse con los nombres científicos validados
+        ResolveCommonNameResponse con los nombres cientificos validados
         
     Raises:
-        HTTPException 400: Si el nombre está vacío
-        HTTPException 404: Si no se encontraron nombres válidos en GBIF
+        HTTPException 400: Si el nombre esta vacio
+        HTTPException 404: Si no se encontraron nombres validos en GBIF
         HTTPException 500: Si hay error en IA o GBIF
     """
+    name = body.name
     if not name or not name.strip():
-        raise HTTPException(status_code=400, detail="El nombre común no puede estar vacío")
+        raise HTTPException(status_code=400, detail="El nombre comun no puede estar vacio")
     
     name = name.strip().lower()
     
@@ -75,7 +78,7 @@ def resolve_common_name(
         if not scientific_names:
             raise HTTPException(
                 status_code=404,
-                detail=f"IA no pudo identificar nombres científicos para '{name}'"
+                detail=f"IA no pudo identificar nombres cientificos para '{name}'"
             )
         
         # Paso 2: Validar con GBIF
@@ -85,7 +88,7 @@ def resolve_common_name(
         if not validated_results:
             raise HTTPException(
                 status_code=404,
-                detail=f"No se pudo validar ningún nombre científico en GBIF para '{name}'"
+                detail=f"No se pudo validar ningun nombre cientifico en GBIF para '{name}'"
             )
         
         # Paso 3: Transformar resultados al formato de respuesta
@@ -129,7 +132,7 @@ def resolve_common_name_batch(
     _=Depends(auth_middleware)
 ):
     """
-    Resuelve múltiples nombres comunes en una sola solicitud
+    Resuelve multiples nombres comunes en una sola solicitud
     
     Request body:
     {
@@ -150,8 +153,9 @@ def resolve_common_name_batch(
     results = []
     for name in names:
         try:
-            # Reutilizar la lógica del endpoint anterior
-            response = resolve_common_name(name)
+            # Reutilizar la logica del endpoint anterior
+            request_body = ResolveCommonNameRequest(name=name)
+            response = resolve_common_name(request_body)
             results.append({
                 "status": "success",
                 "data": response

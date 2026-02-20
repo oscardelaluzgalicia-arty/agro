@@ -4,6 +4,7 @@ from .auth import login, auth_middleware
 from .crud import crud_action
 from .db import get_connection
 from routes.gbif import router as gbif_router
+from routes.semantic_translator import router as semantic_translator_router
 from agronomic.agronomic import enrich_species_agronomy_sync
 
 app = FastAPI()
@@ -79,4 +80,10 @@ app.include_router(
     gbif_router,
     prefix="/api/v1/gbif",
     tags=["GBIF"]
+)
+
+app.include_router(
+    semantic_translator_router,
+    prefix="/api/v1/semantic",
+    tags=["Semantic Translator"]
 )

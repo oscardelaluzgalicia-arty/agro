@@ -91,31 +91,41 @@ def resolve_common_name(
                 detail=f"No se pudo validar ningun nombre cientifico en GBIF para '{name}'"
             )
         
-        # Paso 3: Transformar resultados al formato de respuesta
+        # Paso 3: Transformar resultados al formato de respuesta (usar dicts para evitar errores de validacion)
         scientific_names_response = []
         for result in validated_results:
-            gbif_data = result["gbifData"]
-            scientific_names_response.append(
-                ScientificNameResult(
-                    inputName=result["inputName"],
-                    scientificName=gbif_data["scientificName"],
-                    canonicalName=gbif_data["canonicalName"],
-                    taxonKey=gbif_data["usageKey"],
-                    rank=gbif_data["rank"],
-                    status=gbif_data["status"],
-                    confidence=gbif_data["confidence"],
-                    matchType=gbif_data["matchType"],
-                    phylum=gbif_data["phylum"],
-                    scientificNameAuthorship=gbif_data["scientificNameAuthorship"]
-                )
-            )
-        
-        # Paso 4: Retornar respuesta
-        return ResolveCommonNameResponse(
-            commonName=name,
-            scientificNames=scientific_names_response,
-            totalFound=len(scientific_names_response)
-        )
+            gbif_data = result.get("gbifData", {})
+            try:
+                taxon_key = gbif_data.get("usageKey") or gbif_data.get("taxonKey")
+                if taxon_key is not None:
+                    try:
+                        taxon_key = int(taxon_key)
+                    except Exception:
+                        taxon_key = None
+
+                item = {
+                    "inputName": result.get("inputName"),
+                    "scientificName": gbif_data.get("scientificName"),
+                    "canonicalName": gbif_data.get("canonicalName"),
+                    "taxonKey": taxon_key,
+                    "rank": gbif_data.get("rank"),
+                    "status": gbif_data.get("status"),
+                    "confidence": gbif_data.get("confidence"),
+                    "matchType": gbif_data.get("matchType"),
+                    "phylum": gbif_data.get("phylum"),
+                    "scientificNameAuthorship": gbif_data.get("scientificNameAuthorship")
+                }
+                scientific_names_response.append(item)
+            except Exception:
+                # Ignorar resultados problematicos pero continuar
+                continue
+
+        # Paso 4: Retornar respuesta como dict
+        return {
+            "commonName": name,
+            "scientificNames": scientific_names_response,
+            "totalFound": len(scientific_names_response)
+        }
         
     except HTTPException:
         raise

@@ -27,7 +27,7 @@ def test_translator():
         print("OK - Translator inicializado correctamente")
         
         # Prueba con un nombre común
-        test_names = ["uva", "manzana", "tomate"]
+        test_names = ["uva", "manzana", "maiz"]
         
         for common_name in test_names:
             print(f"\nTradduciendo: '{common_name}'")

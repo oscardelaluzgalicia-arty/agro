@@ -5,6 +5,7 @@ from .crud import crud_action
 from .db import get_connection
 from routes.gbif import router as gbif_router
 from routes.semantic_translator import router as semantic_translator_router
+from routes.grid_h3 import router as grid_h3_router
 from agronomic.agronomic import enrich_species_agronomy_sync
 
 app = FastAPI()
@@ -86,4 +87,10 @@ app.include_router(
     semantic_translator_router,
     prefix="/api/v1/semantic",
     tags=["Semantic Translator"]
+)
+
+app.include_router(
+    grid_h3_router,
+    prefix="/api/v1/grid",
+    tags=["Grid H3"]
 )

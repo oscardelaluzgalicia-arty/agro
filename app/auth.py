@@ -16,6 +16,45 @@ def verify_password(plain: str, hashed: str) -> bool:
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
+def get_user_modules(id_user: int) -> list:
+    """
+    Extrae los módulos asignados a un usuario desde la tabla user_modules
+    
+    Args:
+        id_user: ID del usuario
+        
+    Returns:
+        Lista de diccionarios con módulos: [{"id_module": int, "name": str, "access_level": str}, ...]
+    """
+    conn = get_connection()
+    if not conn:
+        return []
+    
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT 
+                    m.id_module,
+                    m.name,
+                    m.description,
+                    um.access_level,
+                    um.granted_at
+                FROM user_modules um
+                JOIN modules m ON um.id_module = m.id_module
+                WHERE um.id_user = %s AND m.status = 'active'
+                ORDER BY m.name
+                """,
+                (id_user,)
+            )
+            modules = cur.fetchall()
+            return [dict(module) for module in modules] if modules else []
+    except Exception as e:
+        print(f"Error fetching user modules: {e}")
+        return []
+    finally:
+        conn.close()
+
 def create_token(data: dict):
     payload = data.copy()
     payload["exp"] = datetime.utcnow() + timedelta(minutes=EXPIRE)
@@ -72,12 +111,17 @@ def login(username: str, password: str):
         if not verify_password(password, user["password_hash"]):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-        return create_token({
+        token = create_token({
             "id_user": user["id_user"],
             "id_person": user["id_person"],
             "username": user["username"],
             "status": user["status"]
         })
+
+        return {
+            "token": token,
+            "id_user": user["id_user"]
+        }
 
     finally:
         conn.close()

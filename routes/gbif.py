@@ -42,7 +42,7 @@ def import_from_gbif(
     
     # Obtener taxonomía completa desde OpenTreeOfLife
     scientific_name = full_data.get("scientificName")
-    print(f"\n🔍 Consultando OpenTreeOfLife por: {scientific_name}")
+    print(f"\n Consultando OpenTreeOfLife por: {scientific_name}")
     otol_data = get_taxonomy_from_otol(scientific_name)
     
     print("\n" + "="*60)

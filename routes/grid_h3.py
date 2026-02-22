@@ -11,22 +11,40 @@ class GridRequest(BaseModel):
     resolution: int = 5
 
 
-# Default bounding box for Mexico (approx)
-STATE_BBOX = {
-    "mexico": {  # Estado de México
-        "min_lat": 18.5,
-        "max_lat": 20.3,
-        "min_lon": -100.5,
-        "max_lon": -98.5
-    },
-    "jalisco": {
-        "min_lat": 18.9,
-        "max_lat": 22.8,
-        "min_lon": -105.7,
-        "max_lon": -101.2
-    }
+STATE_FILES = {
+    "ags": "01-Ags.geojson",
+    "bc": "02-Bc.geojson",
+    "bcs": "03-Bcs.geojson",
+    "camp": "04-Camp.geojson",
+    "coah": "05-Coah.geojson",
+    "col": "06-Col.geojson",
+    "chis": "07-Chis.geojson",
+    "chih": "08-Chih.geojson",
+    "cdmx": "09-Cdmx.geojson",
+    "dgo": "10-Dgo.geojson",
+    "gto": "11-Gto.geojson",
+    "gro": "12-Gro.geojson",
+    "hgo": "13-Hgo.geojson",
+    "jal": "14-Jal.geojson",
+    "mex": "15-Mex.geojson",
+    "mich": "16-Mich.geojson",
+    "mor": "17-Mor.geojson",
+    "nay": "18-Nay.geojson",
+    "nl": "19-NL.geojson",
+    "oax": "20-Oax.geojson",
+    "pue": "21-Pue.geojson",
+    "qro": "22-Qro.geojson",
+    "qroo": "23-Qroo.geojson",
+    "slp": "24-SLP.geojson",
+    "sin": "25-Sin.geojson",
+    "son": "26-Son.geojson",
+    "tab": "27-Tab.geojson",
+    "tmps": "28-Tmps.geojson",
+    "tlax": "29-Tlax.geojson",
+    "ver": "30-Ver.geojson",
+    "yuc": "31-Yuc.geojson",
+    "zac": "32-Zac.geojson",
 }
-
 
 @router.post("/grid-h3")
 def create_h3_grid(body: GridRequest, _=Depends(auth_middleware)):

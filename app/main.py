@@ -1,6 +1,6 @@
 # App + endpoint único
 from fastapi import FastAPI, Depends, Request, BackgroundTasks
-from .auth import login, auth_middleware
+from .auth import login, auth_middleware, get_user_modules
 from .crud import crud_action
 from .db import get_connection
 from routes.gbif import router as gbif_router
@@ -17,8 +17,12 @@ def health():
 
 @app.post("/login")
 def login_endpoint(body: dict):
+    login_result = login(body["username"], body["password"])
+    modules = get_user_modules(login_result["id_user"])
+    
     return {
-        "token": login(body["username"], body["password"])
+        "token": login_result["token"],
+        "modulos": modules
     }
 
 @app.post("/api/v1/crud")

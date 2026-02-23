@@ -15,7 +15,13 @@ def crud_action(action: str, table: str, data: dict = None, where: dict = None):
 
         elif action == "read":
             sql = f"SELECT * FROM {table}"
-            cur.execute(sql)
+            params = ()
+            if where and isinstance(where, dict):
+                wheres = " AND ".join([f"{k}=%s" for k in where.keys()])
+                sql = f"{sql} WHERE {wheres}"
+                params = tuple(where.values())
+
+            cur.execute(sql, params)
             return cur.fetchall()
 
         elif action == "update":
